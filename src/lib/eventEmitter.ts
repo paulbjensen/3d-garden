@@ -34,10 +34,10 @@ import EventEmitter from "./EventEmitter/EventEmitter";
 */
 const typedEvents = [
 	"ballFellOff", // Used to indicate when a ball has fallen off the table
-    "gameOver", // Used to indicate when the game is over
-    "playerAction", // Used to indicate when a player has performed an action
-    "playerPositionUpdate", // Used to indicate the position of a player
-    "gameRestart" // Used to reset the game and the player's positions
+	"gameOver", // Used to indicate when the game is over
+	"playerAction", // Used to indicate when a player has performed an action
+	"playerPositionUpdate", // Used to indicate the position of a player
+	"gameRestart", // Used to reset the game and the player's positions
 ];
 
 const eventEmitter = new EventEmitter({ typedEvents });

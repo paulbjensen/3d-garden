@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { T } from '@threlte/core'
-  import { AutoColliders } from '@threlte/rapier'
+import { T } from "@threlte/core";
+import { AutoColliders } from "@threlte/rapier";
 </script>
 
 <T.Group position={[0, 0, 0]}>
