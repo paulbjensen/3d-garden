@@ -1,153 +1,143 @@
 <script lang="ts">
-  import { Canvas } from '@threlte/core'
-  import Scene from './Scene.svelte'
-  import { World } from '@threlte/rapier'
-  import type { Body } from './lib/types';
-  import { getRandomRotation } from './lib/helpers';
-	import { Vector3 } from 'three';
-  import eventEmitter from './lib/eventEmitter';
-  import { onMount, onDestroy } from 'svelte';
-  // import HubClient from '@anephenix/hub/lib/client';
+import { Canvas } from "@threlte/core";
+import { World } from "@threlte/rapier";
+import { onDestroy, onMount } from "svelte";
+import { Vector3 } from "three";
+import Scene from "./Scene.svelte";
+import eventEmitter from "./lib/eventEmitter";
+import { getRandomRotation } from "./lib/helpers";
+import type { Body } from "./lib/types";
 
-  // Create an instance of HubClient
-  let players: Body[] = $state([]);
+const players: Body[] = $state([]);
 
-  let gameStatus = $state('active');
-  let playerWhoWon = $state(null);
+let gameStatus = $state("active");
+let playerWhoWon: Body | null = $state(null);
 
-  const startingPositions = [
-    new Vector3(-1, 4, 1),
-    new Vector3(0, 4, 2),
-    new Vector3(1, 4, 3),
-    new Vector3(2, 4, 4)
-  ];
+const startingPositions = [
+	new Vector3(-1, 4, 1),
+	new Vector3(0, 4, 2),
+	new Vector3(1, 4, 3),
+	new Vector3(2, 4, 4),
+];
 
-  players.push({
-    id: 'xx1',
-    name: 'Player 1',
-    mounted: Date.now(),
-    position: startingPositions[0],
-    rotation: getRandomRotation(),
-    color: 'yellow',
-    status: 'active',
-    isBot: false
-  },
-  {
-    id: 'xx2',
-    name: 'Bot 1',
-    mounted: Date.now(),
-    position: startingPositions[1],
-    rotation: getRandomRotation(),
-    color: 'green',
-    status: 'active',
-    isBot: true
-  },
-  {
-    id: 'xx3',
-    name: 'Bot 2',
-    mounted: Date.now(),
-    position: startingPositions[2],
-    rotation: getRandomRotation(),
-    color: 'blue',
-    status: 'active',
-    isBot: true
-  },
-  {
-    id: 'xx4',
-    name: 'Bot 3',
-    mounted: Date.now(),
-    position: startingPositions[3],
-    rotation: getRandomRotation(),
-    color: 'red',
-    status: 'active',
-    isBot: true
-  });
+players.push(
+	{
+		id: "xx1",
+		name: "Player 1",
+		mounted: Date.now(),
+		position: startingPositions[0],
+		rotation: getRandomRotation(), // Maybe this should be a fixed value
+		color: "yellow",
+		status: "active",
+		isBot: false,
+	},
+	{
+		id: "xx2",
+		name: "Bot 1",
+		mounted: Date.now(),
+		position: startingPositions[1],
+		rotation: getRandomRotation(),
+		color: "green",
+		status: "active",
+		isBot: true,
+	},
+	{
+		id: "xx3",
+		name: "Bot 2",
+		mounted: Date.now(),
+		position: startingPositions[2],
+		rotation: getRandomRotation(),
+		color: "blue",
+		status: "active",
+		isBot: true,
+	},
+	{
+		id: "xx4",
+		name: "Bot 3",
+		mounted: Date.now(),
+		position: startingPositions[3],
+		rotation: getRandomRotation(),
+		color: "red",
+		status: "active",
+		isBot: true,
+	},
+);
 
-  function checkIfGameOver() {
-    const remainingPlayers = players.filter(player => player.status === 'active');
-    if (remainingPlayers.length === 1) {
-      eventEmitter.emit('gameOver', { winner: remainingPlayers[0] });
-    }
+function checkIfGameOver() {
+	const remainingPlayers = players.filter(
+		(player) => player.status === "active",
+	);
+	if (remainingPlayers.length === 1) {
+		eventEmitter.emit("gameOver", { winner: remainingPlayers[0] });
+	}
 
-    // Check if it was the player that fells off
-    const onlyBots = remainingPlayers.every(player => player.isBot);
-    if (onlyBots) {
-      eventEmitter.emit('gameOver', { winner: null });
-    }
-  }
+	// Check if it was the player that fells off
+	const onlyBots = remainingPlayers.every((player) => player.isBot);
+	if (onlyBots) {
+		eventEmitter.emit("gameOver", { winner: null });
+	}
+}
 
-  eventEmitter.on('gameOver', ({ winner }) => {
-    playerWhoWon = winner;
-    gameStatus = 'gameOver';
-  });
+eventEmitter.on("gameOver", ({ winner }) => {
+	playerWhoWon = winner;
+	gameStatus = "gameOver";
+});
 
-  // WebSocket connection to the server
-  // const hubClient = new HubClient({ url: 'ws://localhost:4000' });
-  // const channel = 'game';
-  
-  // This is a workaround to wait for the connection to be established
-  // Otherwise, when trying to subscribe, it throws an error
-  // setTimeout(() => {
-  //   hubClient.subscribe(channel, (message) => {
-  //     console.log('Received message:', message);
-  //   });    
-  // }, 1000);
+function handleKeyDown(event: KeyboardEvent) {
+	switch (event.key) {
+		case "ArrowUp":
+			eventEmitter.emit("playerAction", {
+				playerId: players[0].id,
+				action: "moveForward",
+			});
+			break;
+		case "ArrowDown":
+			eventEmitter.emit("playerAction", {
+				playerId: players[0].id,
+				action: "moveBackward",
+			});
+			break;
+		case "ArrowLeft":
+			eventEmitter.emit("playerAction", {
+				playerId: players[0].id,
+				action: "moveLeft",
+			});
+			break;
+		case "ArrowRight":
+			eventEmitter.emit("playerAction", {
+				playerId: players[0].id,
+				action: "moveRight",
+			});
+			break;
+		case " ":
+			eventEmitter.emit("playerAction", {
+				playerId: players[0].id,
+				action: "jump",
+			});
+			break;
+	}
+}
 
+eventEmitter.on("ballFellOff", ({ id }) => {
+	players.find((player) => player.id === id).status = "fallen";
+	checkIfGameOver();
+});
 
-  // const gameUpdates = (message) => {
-  //   const { playerId, action } = message;
-  //   eventEmitter.emit('playerAction', { playerId, action });
-  //   console.log({ message });
-  // };
-  // hubClient.addChannelMessageHandler(channel, gameUpdates);
+function restartGame() {
+	players.forEach((player, i) => {
+		player.status = "active";
+	});
+	gameStatus = "active";
+	playerWhoWon = null;
+	eventEmitter.emit("gameRestart");
+}
 
-  function handleKeyDown(event: KeyboardEvent) {
-        switch (event.key) {
-            case 'ArrowUp':
-                // (async () => await hubClient.publish(channel, {playerId: players[0].id, action: 'moveForward' }))();
-                eventEmitter.emit('playerAction', { playerId: players[0].id, action: 'moveForward' });
-                break;
-            case 'ArrowDown':
-                // (async () => await hubClient.publish(channel, {playerId: players[0].id, action: 'moveBackward' }))();
-                eventEmitter.emit('playerAction', { playerId: players[0].id, action: 'moveBackward' });
-                break;
-            case 'ArrowLeft':
-                // (async () => await hubClient.publish(channel, {playerId: players[0].id, action: 'moveLeft' }))();
-                eventEmitter.emit('playerAction', { playerId: players[0].id, action: 'moveLeft' });
-                break;
-            case 'ArrowRight':
-                // (async () => await hubClient.publish(channel, {playerId: players[0].id, action: 'moveRight' }))();
-                eventEmitter.emit('playerAction', { playerId: players[0].id, action: 'moveRight' });
-                break;
-            case ' ':
-                // (async () => await hubClient.publish(channel, {playerId: players[0].id, action: 'jump' }))();
-                eventEmitter.emit('playerAction', { playerId: players[0].id, action: 'jump' });
-                break;          
-        }
-  }
-
-  eventEmitter.on('ballFellOff', ({id}) => {
-    players.find(player => player.id === id).status = 'fallen';
-    checkIfGameOver();
-  })
-
-  function restartGame() {
-    players.forEach((player, i) => {
-      player.status = 'active';
-    });
-    gameStatus = 'active';
-    playerWhoWon = null;
-    eventEmitter.emit('gameRestart');
-  }
-
-  onMount(() => {
-        window.addEventListener('keydown', handleKeyDown);
-    });
-  onDestroy(() => {
-      window.removeEventListener('keydown', handleKeyDown);
-  });
-
-
+onMount(() => {
+	window.addEventListener("keydown", handleKeyDown);
+});
+onDestroy(() => {
+	window.removeEventListener("keydown", handleKeyDown);
+});
 </script>
 
 <style>

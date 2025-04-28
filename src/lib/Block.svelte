@@ -1,16 +1,16 @@
 <script>
-  import { T, useTask } from '@threlte/core'
-  import { interactivity } from '@threlte/extras'
-  import { Spring } from 'svelte/motion'
+import { T, useTask } from "@threlte/core";
+import { interactivity } from "@threlte/extras";
+import { Spring } from "svelte/motion";
 
-  interactivity()
+interactivity();
 
-  const scale = new Spring(1)
+const scale = new Spring(1);
 
-  let rotation = 0
-  useTask((delta) => {
-    rotation += delta
-  })
+let rotation = 0;
+useTask((delta) => {
+	rotation += delta;
+});
 </script>
 
 

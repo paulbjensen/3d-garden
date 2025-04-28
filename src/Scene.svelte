@@ -1,55 +1,60 @@
 <script lang="ts">
-  import Plate from './lib/Plate.svelte'
-  import Lighting from './lib/Lighting.svelte';
-  import Camera from './lib/Camera.svelte';
-  import Player from './lib/Player.svelte';
-  import eventEmitter from './lib/eventEmitter';
-  import { useTask } from '@threlte/core';
-  import { Vector3 } from 'three';
+import { useTask } from "@threlte/core";
+import { Vector3 } from "three";
+import Camera from "./lib/Camera.svelte";
+import Lighting from "./lib/Lighting.svelte";
+import Plate from "./lib/Plate.svelte";
+import Player from "./lib/Player.svelte";
+import eventEmitter from "./lib/eventEmitter";
+import type { Body } from "./lib/types";
 
-  const { players } = $props();
+const { players } = $props();
 
-  const defaultPlayerPositions: { [key: string]: { x: number; y: number; z: number } } = {};
-  players.forEach(player => {
-    defaultPlayerPositions[player.id] = player.position;
-  });
+const defaultPlayerPositions: {
+	[key: string]: { x: number; y: number; z: number };
+} = {};
+players.forEach((player) => {
+	defaultPlayerPositions[player.id] = player.position;
+});
 
-  const playerPositions = $state(defaultPlayerPositions);
+const playerPositions = $state(defaultPlayerPositions);
 
-  eventEmitter.on('playerPositionUpdate', ({ id, position }) => {
-    playerPositions[id] = position;
-  });
+eventEmitter.on("playerPositionUpdate", ({ id, position }) => {
+	playerPositions[id] = position;
+});
 
-  // Helper to compute distance
-  // function getDistance(a: Vector3, b: Vector3) {
-  //   return a.distanceTo(b)
-  // }
+// Helper to compute distance
+// function getDistance(a: Vector3, b: Vector3) {
+//   return a.distanceTo(b)
+// }
 
-  const center = new Vector3(0, 0, 0)
-  const factor = 0.05;
+const center = new Vector3(0, 0, 0);
+const factor = 0.05;
 
-  eventEmitter.on('gameRestart', () => {
-    // Reset player positions
-    players.forEach(player => {
-      playerPositions[player.id] = defaultPlayerPositions[player.id];
-    });
-  });
+eventEmitter.on("gameRestart", () => {
+	// Reset player positions
+	players.forEach((player: Body) => {
+		playerPositions[player.id] = defaultPlayerPositions[player.id];
+	});
+});
 
-  useTask(() => {
-    // Player 4 is the bot
-    for (const player of players) {
-      if (player.isBot) {
+useTask(() => {
+	// Player 4 is the bot
+	for (const player of players) {
+		if (player.isBot) {
+			// NOTE - this strategy is to simply move towards the center of the plate
+			const playerPos = playerPositions[player.id];
+			const playerVec = new Vector3(playerPos.x, playerPos.y, playerPos.z);
 
-        // NOTE - this strategy is to simply move towards the center of the plate
-        const playerPos = playerPositions[player.id];
-        const playerVec = new Vector3(playerPos.x, playerPos.y, playerPos.z);
-
-        const toCenter = center.clone().sub(playerVec).normalize()
-        eventEmitter.emit('playerAction', { playerId: player.id, action: 'moveTowards', location:  { x: toCenter.x * factor, y: 0, z: toCenter.z * factor } });
-      }
-    }
-  });
-
+			const toCenter = center.clone().sub(playerVec).normalize();
+			eventEmitter.emit("playerAction", {
+				playerId: player.id,
+				action: "moveTowards",
+				location: { x: toCenter.x * factor, y: 0, z: toCenter.z * factor },
+			});
+		}
+	}
+});
 </script>
 
 <Lighting />
