@@ -2,6 +2,7 @@
   lang="ts"
 >
 import { onDestroy, onMount } from "svelte";
+import { RigidBody as RapierRigidBody } from '@dimforge/rapier3d-compat';
 import { T } from "@threlte/core";
 import { useTask } from "@threlte/core";
 import { Collider, RigidBody } from "@threlte/rapier";
@@ -9,7 +10,7 @@ import { MeshStandardMaterial, SphereGeometry } from "three";
 import eventEmitter from "./eventEmitter";
 
 let { id, position, color } = $props();
-let rigidBody: typeof RigidBody | null = $state(null);
+let rigidBody: RapierRigidBody | undefined = $state(undefined);
 
 const geometry = new SphereGeometry(0.5);
 const material = new MeshStandardMaterial({ color, wireframe: false });
@@ -90,7 +91,9 @@ function handlePlayerAction(data: PlayerAction) {
 				jump();
 				break;
 			case "moveTowards":
-				moveTowards(data.location);
+				if (data.location) {
+					moveTowards(data.location);
+				}
 				break;
 		}
 	}
