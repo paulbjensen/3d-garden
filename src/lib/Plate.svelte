@@ -9,8 +9,8 @@ import { AutoColliders } from "@threlte/rapier";
         rotation.x={-Math.PI / 2}
         receiveShadow
     >
-    <T.CircleGeometry args={[6, 40]} />
-    <T.MeshStandardMaterial color="white" />
+      <T.CircleGeometry args={[6, 40]} />
+      <T.MeshStandardMaterial color="white" />
     </T.Mesh>
   </AutoColliders>
 </T.Group>

@@ -8,26 +8,13 @@ import { useTask } from "@threlte/core";
 import { Collider, RigidBody } from "@threlte/rapier";
 import { MeshStandardMaterial, SphereGeometry } from "three";
 import eventEmitter from "./eventEmitter";
+import type { Location, PlayerAction } from "./types";
 
 let { id, position, color } = $props();
 let rigidBody: RapierRigidBody | undefined = $state(undefined);
 
 const geometry = new SphereGeometry(0.5);
 const material = new MeshStandardMaterial({ color, wireframe: false });
-
-// Types and interfaces
-
-type Location = {
-	x: number;
-	y: number;
-	z: number;
-};
-
-interface PlayerAction {
-	playerId: unknown;
-	action: string;
-	location?: Location;
-}
 
 // Functions
 

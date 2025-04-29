@@ -6,53 +6,46 @@ import Lighting from "./lib/Lighting.svelte";
 import Plate from "./lib/Plate.svelte";
 import Player from "./lib/Player.svelte";
 import eventEmitter from "./lib/eventEmitter";
-import type { Body } from "./lib/types";
+import type { Body, PlayerPosition } from "./lib/types";
+import { setupStartingPositions, toCenter } from "./lib/positionLogic";
 
 const { players } = $props();
 
-const defaultPlayerPositions: {
-	[key: string]: { x: number; y: number; z: number };
-} = {};
-players.forEach((player) => {
-	defaultPlayerPositions[player.id] = player.position;
-});
-
+// Setup the default player positions from the initial player props
+const defaultPlayerPositions = setupStartingPositions(players);
 const playerPositions = $state(defaultPlayerPositions);
 
-eventEmitter.on("playerPositionUpdate", ({ id, position }) => {
-	playerPositions[id] = position;
-});
+// Updates the player's position
+function updatePlayerPostion(args: unknown) {
+	const { id, position } = args as PlayerPosition;
+	playerPositions[String(id)] = position;
+}
 
-// Helper to compute distance
-// function getDistance(a: Vector3, b: Vector3) {
-//   return a.distanceTo(b)
-// }
-
-const center = new Vector3(0, 0, 0);
-const factor = 0.05;
-
-eventEmitter.on("gameRestart", () => {
-	// Reset player positions
+// Reset the player positions to the default positions
+function resetPositions(positions: PlayerPosition) {
 	players.forEach((player: Body) => {
-		playerPositions[player.id] = defaultPlayerPositions[player.id];
+		playerPositions[player.id] = positions[player.id];
 	});
-});
+}
+
+// NOTE - this strategy is to simply move towards the center of the plate
+function movePlayerToCenter(player: Body) {
+	const playerPos = playerPositions[player.id];
+	const playerVec = new Vector3(playerPos.x, playerPos.y, playerPos.z);
+	eventEmitter.emit("playerAction", {
+		playerId: player.id,
+		action: "moveTowards",
+		location: toCenter(playerVec),
+	});
+}
+
+// Updates the player's position
+eventEmitter.on("playerPositionUpdate", updatePlayerPostion);
+eventEmitter.on("gameRestart", () => resetPositions(defaultPlayerPositions));
 
 useTask(() => {
-	// Player 4 is the bot
 	for (const player of players) {
-		if (player.isBot) {
-			// NOTE - this strategy is to simply move towards the center of the plate
-			const playerPos = playerPositions[player.id];
-			const playerVec = new Vector3(playerPos.x, playerPos.y, playerPos.z);
-
-			const toCenter = center.clone().sub(playerVec).normalize();
-			eventEmitter.emit("playerAction", {
-				playerId: player.id,
-				action: "moveTowards",
-				location: { x: toCenter.x * factor, y: 0, z: toCenter.z * factor },
-			});
-		}
+		if (player.isBot) movePlayerToCenter(player);
 	}
 });
 </script>

@@ -11,3 +11,21 @@ export type Body = {
 	status?: "active" | "fallen";
 	isBot?: boolean;
 };
+
+// Types and interfaces
+
+export type Location = {
+	x: number;
+	y: number;
+	z: number;
+};
+
+export interface PlayerAction {
+	playerId: unknown;
+	action: string;
+	location?: Location;
+}
+
+export type PlayerPosition = {
+	[key: string]: Location;
+};
