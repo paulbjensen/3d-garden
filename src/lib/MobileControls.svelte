@@ -1,13 +1,12 @@
 <script lang="ts">
 import eventEmitter from "./eventEmitter";
-import type { Location } from "./types";
 const { playerId } = $props();
 
 let listenForPlayerAction = $state(false);
 let x = $state(0);
 let z = $state(0);
 
-function jump(event: TouchEvent) {
+function jump(event: MouseEvent) {
 	event.preventDefault();
 	eventEmitter.emit("playerAction", { playerId, action: "jump" });
 }
