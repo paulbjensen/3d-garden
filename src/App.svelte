@@ -6,6 +6,7 @@ import { Vector3 } from "three";
 import Scene from "./Scene.svelte";
 import eventEmitter from "./lib/eventEmitter";
 import { getRandomRotation } from "./lib/helpers";
+import MobileControls from "./lib/MobileControls.svelte";
 import type { Body } from "./lib/types";
 
 const players: Body[] = $state([]);
@@ -207,6 +208,18 @@ onDestroy(() => {
     font-size: 10pt;
   }
 
+    @media (max-width: 1023px) {
+        .desktop-only {
+            display: none;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .desktop-only {
+            display: block;
+        }
+    }
+
 </style>
 
 <main>
@@ -224,8 +237,9 @@ onDestroy(() => {
   </div>
   <div id="controls">
     <p>You are the yellow ball. Force the other balls off the table.</p>
-    <p>Use the arrow keys to control the player</p>
-    <p>Press space to jump</p>
+    <p class="desktop-only">Use the arrow keys to control the player</p>
+    <p class="desktop-only">Press space to jump</p>
+	  <MobileControls playerId={players[0].id} />
   </div>
 
 

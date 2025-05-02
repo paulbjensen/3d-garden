@@ -1,0 +1,126 @@
+<script lang="ts">
+import eventEmitter from "./eventEmitter";
+import type { Location } from "./types";
+const { playerId } = $props();
+
+let listenForPlayerAction = $state(false);
+let x = $state(0);
+let z = $state(0);
+
+function jump(event: TouchEvent) {
+	event.preventDefault();
+	eventEmitter.emit("playerAction", { playerId, action: "jump" });
+}
+
+function startListening(event: TouchEvent) {
+	event.preventDefault();
+	listenForPlayerAction = true;
+}
+function stopListening(event: TouchEvent) {
+	event.preventDefault();
+	listenForPlayerAction = false;
+	x = 0;
+	z = 0;
+}
+
+function movePlayerTo(event: TouchEvent) {
+	event.preventDefault();
+	if (!listenForPlayerAction) return;
+
+	const controller = document.getElementById("circle-movement-controller");
+	if (!controller) return;
+
+	const rect = controller.getBoundingClientRect();
+	const centerX = rect.left + rect.width / 2;
+	const centerY = rect.top + rect.height / 2;
+	let clientX, clientY;
+
+	// Use the first touch point
+	const touch = event.touches[0];
+	if (!touch) return;
+	clientX = touch.clientX;
+	clientY = touch.clientY;
+
+	x = (clientX - centerX) / rect.width;
+	z = (clientY - centerY) / rect.height;
+
+	eventEmitter.emit("playerAction", {
+		playerId,
+		action: "moveTowards",
+		location: { x, y: 0, z },
+	});
+}
+
+function mapValue(n: number) {
+	// Map n from range [-1, 1] to range [0, 70]
+	return ((n + 1) / 2) * 70;
+}
+</script>
+
+
+<style>
+
+    @media (max-width: 1023px) {
+        #mobile-controls {
+            display: block;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        #mobile-controls {
+            display: none;
+        }
+    }
+
+    #circle-movement-controller {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: solid 3px white;
+    }
+
+    #jumper-button {
+        position: absolute;
+        bottom: 40px;
+        left: 140px;
+        padding: 20px;
+        background-color: orange;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border: solid 2px white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #circle-movement-controller-inner {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        position: absolute;
+        top: 35px;
+        left: 35px;
+        pointer-events: none;
+    }
+
+</style>
+
+<div id="mobile-controls">
+    <div id="circle-movement-controller" ontouchstart={startListening} ontouchend={stopListening} ontouchmove={movePlayerTo}>
+        <div id="circle-movement-controller-inner"
+            style:left={mapValue(x) + "px"}
+            style:top={mapValue(z) + "px"}
+        ></div>
+    </div>
+    <button id="jumper-button" onclick={jump}>Jump</button>
+</div>
