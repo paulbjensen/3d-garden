@@ -2,7 +2,7 @@
 import { T } from "@threlte/core";
 import { OrbitControls } from "@threlte/extras";
 
-let defaultPosition = [0, 20, 30] as [x: number, y: number, z: number];
+let defaultPosition = [0, 12, 15] as [x: number, y: number, z: number];
 
 function handleResize() {
 	const width = window.innerWidth;
@@ -10,7 +10,7 @@ function handleResize() {
 	if (width < 1024) {
 		defaultPosition = [0, 20, 30] as [x: number, y: number, z: number];
 	} else {
-		defaultPosition = [0, 20, 30] as [x: number, y: number, z: number];
+		defaultPosition = [0, 12, 15] as [x: number, y: number, z: number];
 	}
 }
 
