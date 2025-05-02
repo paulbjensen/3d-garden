@@ -2,15 +2,15 @@
 import { T } from "@threlte/core";
 import { OrbitControls } from "@threlte/extras";
 
-let defaultPosition = [0, 10, 10] as [x: number, y: number, z: number];
+let defaultPosition = [0, 10, 15] as [x: number, y: number, z: number];
 
 function handleResize() {
 	const width = window.innerWidth;
 
 	if (width < 1024) {
-		defaultPosition = [0, 15, 20] as [x: number, y: number, z: number];
+		defaultPosition = [0, 10, 20] as [x: number, y: number, z: number];
 	} else {
-		defaultPosition = [0, 10, 10] as [x: number, y: number, z: number];
+		defaultPosition = [0, 10, 15] as [x: number, y: number, z: number];
 	}
 }
 
