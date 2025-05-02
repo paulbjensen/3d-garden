@@ -146,6 +146,7 @@ function mapValue(n: number) {
         left: 0;
         right: 0;
         top: 0;
+        user-select: none;
     }
 
 </style>
