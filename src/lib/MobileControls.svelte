@@ -106,6 +106,7 @@ function mapValue(n: number) {
         justify-content: center;
         align-items: center;
         border: solid 3px white;
+        user-select: none;
     }
 
     #jumper-button {
@@ -123,6 +124,7 @@ function mapValue(n: number) {
         border-radius: 5px;
         cursor: pointer;
         border-radius: 50%;
+        user-select: none;
     }
 
     #circle-movement-controller-inner {
@@ -135,6 +137,15 @@ function mapValue(n: number) {
         top: calc((var(--circle-movement-controller-size) - var(--circle-movement-controller-inner-size))/2);
         left: calc((var(--circle-movement-controller-size) - var(--circle-movement-controller-inner-size))/2);
         pointer-events: none;
+        user-select: none;
+    }
+
+    #mobile-controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: 0;
     }
 
 </style>
