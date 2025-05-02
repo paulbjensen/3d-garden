@@ -52,7 +52,11 @@ function movePlayerTo(event: TouchEvent) {
 
 function mapValue(n: number) {
 	// Map n from range [-1, 1] to range [0, 70]
-	return ((n + 1) / 2) * 70;
+
+	const controllerSize = 150;
+	const innerSize = 30;
+	const difference = controllerSize - innerSize;
+	return ((n + 1) / 2) * difference;
 }
 </script>
 
@@ -71,12 +75,17 @@ function mapValue(n: number) {
         }
     }
 
+    :root {
+        --circle-movement-controller-size: 150px;
+        --circle-movement-controller-inner-size: 30px;
+    }
+
     #circle-movement-controller {
         position: absolute;
-        bottom: 20px;
-        left: 20px;
-        width: 100px;
-        height: 100px;
+        bottom: 40px;
+        left: 40px;
+        width: var(--circle-movement-controller-size);
+        height: var(--circle-movement-controller-size);
         border-radius: 50%;
         background-color: rgba(255, 255, 255, 0.5);
         display: flex;
@@ -88,7 +97,7 @@ function mapValue(n: number) {
     #jumper-button {
         position: absolute;
         bottom: 40px;
-        left: 140px;
+        right: 40px;
         padding: 20px;
         background-color: orange;
         color: white;
@@ -101,14 +110,14 @@ function mapValue(n: number) {
     }
 
     #circle-movement-controller-inner {
-        width: 30px;
-        height: 30px;
+        width: var(--circle-movement-controller-inner-size);
+        height: var(--circle-movement-controller-inner-size);
         border-radius: 50%;
         background-color: rgba(255, 255, 255, 0.8);
         display: flex;
         position: absolute;
-        top: 35px;
-        left: 35px;
+        top: calc((var(--circle-movement-controller-size) - var(--circle-movement-controller-inner-size))/2);
+        left: calc((var(--circle-movement-controller-size) - var(--circle-movement-controller-inner-size))/2);
         pointer-events: none;
     }
 

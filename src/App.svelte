@@ -196,9 +196,21 @@ onDestroy(() => {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   }
 
+  .restart-game {
+	background-color: orange;
+	color: white;
+	border-radius: 4px;
+	padding: 10px 20px;
+	font-size: 16px;
+	font-weight: bold;
+	border-radius: 5px;
+	cursor: pointer;
+	border: none;
+  }
+
   #controls {
     position: absolute;
-    bottom: 20px;
+    top: 100px;
     left: 20px;
     right: 20px;
     color: white;
@@ -239,8 +251,8 @@ onDestroy(() => {
     <p>You are the yellow ball. Force the other balls off the table.</p>
     <p class="desktop-only">Use the arrow keys to control the player</p>
     <p class="desktop-only">Press space to jump</p>
-	  <MobileControls playerId={players[0].id} />
   </div>
+<MobileControls playerId={players[0].id} />
 
 
   {#if gameStatus === 'gameOver' && playerWhoWon !== null}
@@ -248,7 +260,7 @@ onDestroy(() => {
       <div id="game-over">
         <h1>Game Over</h1>
         <p>{playerWhoWon.name} won!</p>
-        <button onclick={restartGame}>Play again</button>
+        <button class="restart-game" onclick={restartGame}>Play again</button>
       </div>
     </div>
   {/if}
@@ -256,7 +268,7 @@ onDestroy(() => {
     <div id="overlay">
       <div id="game-over">
         <h1>Game Over</h1>
-        <button onclick={restartGame}>Play again</button>
+        <button class="restart-game" onclick={restartGame}>Play again</button>
       </div>
     </div>
   {/if}
