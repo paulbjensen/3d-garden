@@ -96,8 +96,8 @@ function mapValue(n: number) {
 
     #circle-movement-controller {
         position: absolute;
-        bottom: 40px;
-        left: 40px;
+        bottom: 4vh;
+        left: 4vw;
         width: var(--circle-movement-controller-size);
         height: var(--circle-movement-controller-size);
         border-radius: 50%;
@@ -110,8 +110,8 @@ function mapValue(n: number) {
 
     #jumper-button {
         position: absolute;
-        bottom: 70px;
-        right: 60px;
+        bottom: 6vh;
+        right: 4vw;
         width: 100px;
         height: 100px;
         background-color: orange;
