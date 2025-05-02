@@ -120,7 +120,8 @@ function handleKeyDown(event: KeyboardEvent) {
 }
 
 eventEmitter.on("ballFellOff", ({ id }) => {
-	players.find((player) => player.id === id).status = "fallen";
+	const player = players.find((player) => player.id === id);
+	if (player) player.status = "fallen";
 	checkIfGameOver();
 });
 

@@ -22,6 +22,21 @@ function stopListening(event: TouchEvent) {
 	z = 0;
 }
 
+function throttle<T extends (...args: any[]) => void>(
+	func: T,
+	limit: number,
+): T {
+	let inThrottle: boolean;
+
+	return function (this: any, ...args: any[]) {
+		if (!inThrottle) {
+			func.apply(this, args);
+			inThrottle = true;
+			setTimeout(() => (inThrottle = false), limit);
+		}
+	} as T;
+}
+
 function movePlayerTo(event: TouchEvent) {
 	event.preventDefault();
 	if (!listenForPlayerAction) return;
@@ -46,13 +61,12 @@ function movePlayerTo(event: TouchEvent) {
 	eventEmitter.emit("playerAction", {
 		playerId,
 		action: "moveTowards",
-		location: { x, y: 0, z },
+		location: { x: x * 0.5, y: 0, z: z * 0.5 },
 	});
 }
 
 function mapValue(n: number) {
 	// Map n from range [-1, 1] to range [0, 70]
-
 	const controllerSize = 150;
 	const innerSize = 30;
 	const difference = controllerSize - innerSize;
@@ -96,9 +110,10 @@ function mapValue(n: number) {
 
     #jumper-button {
         position: absolute;
-        bottom: 40px;
-        right: 40px;
-        padding: 20px;
+        bottom: 70px;
+        right: 60px;
+        width: 100px;
+        height: 100px;
         background-color: orange;
         color: white;
         font-size: 16px;
@@ -107,6 +122,7 @@ function mapValue(n: number) {
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        border-radius: 50%;
     }
 
     #circle-movement-controller-inner {
