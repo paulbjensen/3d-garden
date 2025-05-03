@@ -2,16 +2,14 @@
 import { T } from "@threlte/core";
 import { OrbitControls } from "@threlte/extras";
 
-let defaultPosition = [0, 12, 15] as [x: number, y: number, z: number];
+const desktopPosition = [0, 12, 15] as [x: number, y: number, z: number];
+const mobilePosition = [0, 20, 30] as [x: number, y: number, z: number];
+
+let defaultPosition = desktopPosition;
 
 function handleResize() {
 	const width = window.innerWidth;
-
-	if (width < 1024) {
-		defaultPosition = [0, 20, 30] as [x: number, y: number, z: number];
-	} else {
-		defaultPosition = [0, 12, 15] as [x: number, y: number, z: number];
-	}
+	defaultPosition = width < 1024 ? mobilePosition : desktopPosition;
 }
 
 window.addEventListener("resize", handleResize);
