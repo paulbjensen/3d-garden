@@ -79,7 +79,8 @@ function checkIfGameOver() {
 	}
 }
 
-eventEmitter.on("gameOver", ({ winner }) => {
+eventEmitter.on("gameOver", (args) => {
+	const { winner } = args as { winner: Body | null };
 	playerWhoWon = winner;
 	gameStatus = "gameOver";
 });
@@ -119,7 +120,8 @@ function handleKeyDown(event: KeyboardEvent) {
 	}
 }
 
-eventEmitter.on("ballFellOff", ({ id }) => {
+eventEmitter.on("ballFellOff", (args) => {
+	const { id } = args as { id: string };
 	const player = players.find((player) => player.id === id);
 	if (player) player.status = "fallen";
 	checkIfGameOver();
