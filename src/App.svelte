@@ -7,6 +7,7 @@ import Scene from "./Scene.svelte";
 import eventEmitter from "./lib/eventEmitter";
 import { getRandomRotation } from "./lib/helpers";
 import MobileControls from "./lib/MobileControls.svelte";
+import Overlay from "./lib/Overlay.svelte";
 import type { Body } from "./lib/types";
 
 const players: Body[] = $state([]);
@@ -177,40 +178,6 @@ onDestroy(() => {
     opacity: 0.95;
   }
 
-  #overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-  }
-
-  #game-over {
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 20px 40px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  }
-
-  .restart-game {
-	background-color: orange;
-	color: white;
-	border-radius: 4px;
-	padding: 10px 20px;
-	font-size: 16px;
-	font-weight: bold;
-	border-radius: 5px;
-	cursor: pointer;
-	border: none;
-  }
-
   #controls {
     position: absolute;
     top: 100px;
@@ -255,25 +222,9 @@ onDestroy(() => {
     <p class="desktop-only">Use the arrow keys to control the player</p>
     <p class="desktop-only">Press space to jump</p>
   </div>
-<MobileControls playerId={players[0].id} />
-
-
-  {#if gameStatus === 'gameOver' && playerWhoWon !== null}
-    <div id="overlay">
-      <div id="game-over">
-        <h1>Game Over</h1>
-        <p>{playerWhoWon.name} won!</p>
-        <button class="restart-game" onclick={restartGame}>Play again</button>
-      </div>
-    </div>
-  {/if}
-  {#if gameStatus === 'gameOver' && playerWhoWon === null}
-    <div id="overlay">
-      <div id="game-over">
-        <h1>Game Over</h1>
-        <button class="restart-game" onclick={restartGame}>Play again</button>
-      </div>
-    </div>
+  <MobileControls playerId={players[0].id} />
+  {#if gameStatus === 'gameOver'}
+	<Overlay onClick={restartGame} {playerWhoWon} /> 
   {/if}
 </main>
 
