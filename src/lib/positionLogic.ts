@@ -4,10 +4,9 @@ import { Vector3 } from "three";
 export function setupStartingPositions(players: Body[]) {
 	// Setup the default player positions from the initial player props
 	const defaultPlayerPositions: PlayerPosition = {};
-	players.forEach((player: Body) => {
+	for (const player of players) {
 		defaultPlayerPositions[player.id] = player.position;
-	});
-
+	}
 	return defaultPlayerPositions;
 }
 
