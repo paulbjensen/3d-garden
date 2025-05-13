@@ -9,6 +9,7 @@ import { getRandomRotation } from "./lib/helpers";
 import MobileControls from "./lib/MobileControls.svelte";
 import Overlay from "./lib/Overlay.svelte";
 import type { Body } from "./lib/types";
+import Guide from "./lib/Guide.svelte";
 
 const players: Body[] = $state([]);
 
@@ -177,31 +178,6 @@ onDestroy(() => {
     mix-blend-mode: luminosity;
     opacity: 0.95;
   }
-
-  #controls {
-    position: absolute;
-    top: 100px;
-    left: 20px;
-    right: 20px;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-    line-height: 4px;
-    font-size: 10pt;
-  }
-
-    @media (max-width: 1023px) {
-        .desktop-only {
-            display: none;
-        }
-    }
-
-    @media (min-width: 1024px) {
-        .desktop-only {
-            display: block;
-        }
-    }
-
 </style>
 
 <main>
@@ -217,11 +193,7 @@ onDestroy(() => {
       </div>
     {/each}
   </div>
-  <div id="controls">
-    <p>You are the yellow ball. Force the other balls off the table.</p>
-    <p class="desktop-only">Use the arrow keys to control the player</p>
-    <p class="desktop-only">Press space to jump</p>
-  </div>
+  <Guide />
   <MobileControls playerId={players[0].id} />
   {#if gameStatus === 'gameOver'}
 	<Overlay onClick={restartGame} {playerWhoWon} /> 
