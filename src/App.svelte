@@ -7,6 +7,7 @@ import Scene from "./Scene.svelte";
 import eventEmitter from "./lib/eventEmitter";
 import { getRandomRotation } from "./lib/helpers";
 import MobileControls from "./lib/MobileControls.svelte";
+import GamepadControls from "./lib/GamepadControls.svelte";
 import Overlay from "./lib/Overlay.svelte";
 import type { Body } from "./lib/types";
 import Guide from "./lib/Guide.svelte";
@@ -33,6 +34,7 @@ players.push(
 		color: "yellow",
 		status: "active",
 		isBot: false,
+		size: 0.5,
 	},
 	{
 		id: "xx2",
@@ -43,6 +45,7 @@ players.push(
 		color: "green",
 		status: "active",
 		isBot: true,
+		size: 0.5,
 	},
 	{
 		id: "xx3",
@@ -53,6 +56,7 @@ players.push(
 		color: "blue",
 		status: "active",
 		isBot: true,
+		size: 0.5,
 	},
 	{
 		id: "xx4",
@@ -63,8 +67,11 @@ players.push(
 		color: "red",
 		status: "active",
 		isBot: true,
+		size: 0.5,
 	},
 );
+
+const indexOfPlayer = players.findIndex((player) => player.isBot === false);
 
 function checkIfGameOver() {
 	const remainingPlayers = players.filter(
@@ -91,31 +98,31 @@ function handleKeyDown(event: KeyboardEvent) {
 	switch (event.key) {
 		case "ArrowUp":
 			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
+				playerId: players[indexOfPlayer].id,
 				action: "moveForward",
 			});
 			break;
 		case "ArrowDown":
 			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
+				playerId: players[indexOfPlayer].id,
 				action: "moveBackward",
 			});
 			break;
 		case "ArrowLeft":
 			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
+				playerId: players[indexOfPlayer].id,
 				action: "moveLeft",
 			});
 			break;
 		case "ArrowRight":
 			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
+				playerId: players[indexOfPlayer].id,
 				action: "moveRight",
 			});
 			break;
 		case " ":
 			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
+				playerId: players[indexOfPlayer].id,
 				action: "jump",
 			});
 			break;
@@ -195,6 +202,7 @@ onDestroy(() => {
   </div>
   <Guide />
   <MobileControls playerId={players[0].id} />
+  <GamepadControls playerId={players[0].id} />
   {#if gameStatus === 'gameOver'}
 	<Overlay onClick={restartGame} {playerWhoWon} /> 
   {/if}

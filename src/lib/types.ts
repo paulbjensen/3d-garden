@@ -10,6 +10,7 @@ export type Body = {
 	controllable?: boolean;
 	status?: "active" | "fallen";
 	isBot?: boolean;
+	size: number;
 };
 
 // Types and interfaces

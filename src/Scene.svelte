@@ -58,5 +58,6 @@ useTask(() => {
     id={player.id}
     position={player.position}
     color={player.color}
+	size={player.size}
   />
 {/each}
