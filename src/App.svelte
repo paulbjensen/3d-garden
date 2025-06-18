@@ -202,7 +202,7 @@ onDestroy(() => {
   </div>
   <Guide />
   <MobileControls playerId={players[0].id} />
-  <GamepadControls playerId={players[0].id} />
+  <GamepadControls playerId={players[0].id} {restartGame} />
   {#if gameStatus === 'gameOver'}
 	<Overlay onClick={restartGame} {playerWhoWon} /> 
   {/if}
