@@ -1,11 +1,9 @@
 <script lang="ts">
 import { onMount, onDestroy } from "svelte";
 import eventEmitter from "./eventEmitter";
-const { playerId, restartGame } = $props();
+const { playerId, gamepadId, restartGame } = $props();
 
 let listenForPlayerAction = $state(false);
-let x = $state(0);
-let z = $state(0);
 let gameIsOver = $state(false);
 const gamepads = {};
 
@@ -71,7 +69,7 @@ onMount(() => {
 	});
 
 	setInterval(() => {
-		const myGamepad = navigator.getGamepads()[0]; // use the first gamepad
+		const myGamepad = navigator.getGamepads()[gamepadId]; // use the gamepadId from props
 		if (!myGamepad) {
 			listenForPlayerAction = false;
 			console.log("No gamepad connected");

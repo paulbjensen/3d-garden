@@ -5,7 +5,7 @@ import { Vector3 } from "three";
 import Scene from "./Scene.svelte";
 import eventEmitter from "./lib/eventEmitter";
 import { getRandomRotation } from "./lib/helpers";
-import MobileControls from "./lib/MobileControls.svelte";
+// import MobileControls from "./lib/MobileControls.svelte";
 import GamepadControls from "./lib/GamepadControls.svelte";
 import KeyboardControls from "./lib/KeyboardControls.svelte";
 import Overlay from "./lib/Overlay.svelte";
@@ -18,12 +18,14 @@ let gameStatus = $state("active");
 let playerWhoWon: Body | null = $state(null);
 
 // Maybe we should make the positions random in the future, linked to the size of the map
-const startingPositions = [
-	new Vector3(-1, 4, 1),
-	new Vector3(0, 4, 2),
-	new Vector3(1, 4, 3),
-	new Vector3(2, 4, 4),
-];
+
+const createRandomPosition = () => {
+	return new Vector3(
+		Math.floor(Math.random() * 5) - 2, // Random x between -2 and 2
+		4, // Fixed height
+		Math.floor(Math.random() * 5) - 2, // Random z between -2 and 2
+	);
+};
 
 // This adds the players for the game. We will need to make this comfigurable from a new game screen in the future
 players.push(
@@ -31,7 +33,7 @@ players.push(
 		id: "xx1",
 		name: "Player 1",
 		mounted: Date.now(),
-		position: startingPositions[0],
+		position: createRandomPosition(),
 		rotation: getRandomRotation(), // Maybe this should be a fixed value
 		color: "yellow",
 		status: "active",
@@ -40,20 +42,20 @@ players.push(
 	},
 	{
 		id: "xx2",
-		name: "Bot 1",
+		name: "Player 2",
 		mounted: Date.now(),
-		position: startingPositions[1],
+		position: createRandomPosition(),
 		rotation: getRandomRotation(),
 		color: "green",
 		status: "active",
-		isBot: true,
+		isBot: false,
 		size: 0.5,
 	},
 	{
 		id: "xx3",
 		name: "Bot 2",
 		mounted: Date.now(),
-		position: startingPositions[2],
+		position: createRandomPosition(),
 		rotation: getRandomRotation(),
 		color: "blue",
 		status: "active",
@@ -64,7 +66,7 @@ players.push(
 		id: "xx4",
 		name: "Bot 3",
 		mounted: Date.now(),
-		position: startingPositions[3],
+		position: createRandomPosition(),
 		rotation: getRandomRotation(),
 		color: "red",
 		status: "active",
@@ -159,8 +161,9 @@ function restartGame() {
     {/each}
   </div>
   <Guide />
-  <MobileControls playerId={players[0].id} />
-  <GamepadControls playerId={players[0].id} {restartGame} />
+  <!-- <MobileControls playerId={players[0].id} /> -->
+  <GamepadControls playerId={players[0].id} gamepadId={0} {restartGame} />
+  <GamepadControls playerId={players[1].id} gamepadId={1} {restartGame} />
   <KeyboardControls playerId={players[0].id} />
   {#if gameStatus === 'active'}
 	<!-- <Overlay onClick={restartGame} /> -->
