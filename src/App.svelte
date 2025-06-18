@@ -1,13 +1,13 @@
 <script lang="ts">
 import { Canvas } from "@threlte/core";
 import { World } from "@threlte/rapier";
-import { onDestroy, onMount } from "svelte";
 import { Vector3 } from "three";
 import Scene from "./Scene.svelte";
 import eventEmitter from "./lib/eventEmitter";
 import { getRandomRotation } from "./lib/helpers";
 import MobileControls from "./lib/MobileControls.svelte";
 import GamepadControls from "./lib/GamepadControls.svelte";
+import KeyboardControls from "./lib/KeyboardControls.svelte";
 import Overlay from "./lib/Overlay.svelte";
 import type { Body } from "./lib/types";
 import Guide from "./lib/Guide.svelte";
@@ -17,6 +17,7 @@ const players: Body[] = $state([]);
 let gameStatus = $state("active");
 let playerWhoWon: Body | null = $state(null);
 
+// Maybe we should make the positions random in the future, linked to the size of the map
 const startingPositions = [
 	new Vector3(-1, 4, 1),
 	new Vector3(0, 4, 2),
@@ -24,6 +25,7 @@ const startingPositions = [
 	new Vector3(2, 4, 4),
 ];
 
+// This adds the players for the game. We will need to make this comfigurable from a new game screen in the future
 players.push(
 	{
 		id: "xx1",
@@ -71,8 +73,6 @@ players.push(
 	},
 );
 
-const indexOfPlayer = players.findIndex((player) => player.isBot === false);
-
 function checkIfGameOver() {
 	const remainingPlayers = players.filter(
 		(player) => player.status === "active",
@@ -94,41 +94,6 @@ eventEmitter.on("gameOver", (args) => {
 	gameStatus = "gameOver";
 });
 
-function handleKeyDown(event: KeyboardEvent) {
-	switch (event.key) {
-		case "ArrowUp":
-			eventEmitter.emit("playerAction", {
-				playerId: players[indexOfPlayer].id,
-				action: "moveForward",
-			});
-			break;
-		case "ArrowDown":
-			eventEmitter.emit("playerAction", {
-				playerId: players[indexOfPlayer].id,
-				action: "moveBackward",
-			});
-			break;
-		case "ArrowLeft":
-			eventEmitter.emit("playerAction", {
-				playerId: players[indexOfPlayer].id,
-				action: "moveLeft",
-			});
-			break;
-		case "ArrowRight":
-			eventEmitter.emit("playerAction", {
-				playerId: players[indexOfPlayer].id,
-				action: "moveRight",
-			});
-			break;
-		case " ":
-			eventEmitter.emit("playerAction", {
-				playerId: players[indexOfPlayer].id,
-				action: "jump",
-			});
-			break;
-	}
-}
-
 eventEmitter.on("ballFellOff", (args) => {
 	const { id } = args as { id: string };
 	const player = players.find((player) => player.id === id);
@@ -144,13 +109,6 @@ function restartGame() {
 	playerWhoWon = null;
 	eventEmitter.emit("gameRestart");
 }
-
-onMount(() => {
-	window.addEventListener("keydown", handleKeyDown);
-});
-onDestroy(() => {
-	window.removeEventListener("keydown", handleKeyDown);
-});
 </script>
 
 <style>
@@ -203,6 +161,10 @@ onDestroy(() => {
   <Guide />
   <MobileControls playerId={players[0].id} />
   <GamepadControls playerId={players[0].id} {restartGame} />
+  <KeyboardControls playerId={players[0].id} />
+  {#if gameStatus === 'active'}
+	<!-- <Overlay onClick={restartGame} /> -->
+  {/if}
   {#if gameStatus === 'gameOver'}
 	<Overlay onClick={restartGame} {playerWhoWon} /> 
   {/if}
