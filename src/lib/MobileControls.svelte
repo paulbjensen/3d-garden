@@ -1,6 +1,6 @@
 <script lang="ts">
 import eventEmitter from "./eventEmitter";
-const { playerId } = $props();
+const { playerId }: { playerId: string } = $props();
 
 let listenForPlayerAction = $state(false);
 let x = $state(0);
@@ -152,11 +152,11 @@ function mapValue(n: number) {
 </style>
 
 <div id="mobile-controls">
-    <div id="circle-movement-controller" ontouchstart={startListening} ontouchend={stopListening} ontouchmove={movePlayerTo}>
+    <div id="circle-movement-controller" on:touchstart={startListening} on:touchend={stopListening} on:touchmove={movePlayerTo}>
         <div id="circle-movement-controller-inner"
             style:left={mapValue(x) + "px"}
             style:top={mapValue(z) + "px"}
         ></div>
     </div>
-    <button id="jumper-button" onclick={jump}>Jump</button>
+    <button id="jumper-button" on:click={jump}>Jump</button>
 </div>

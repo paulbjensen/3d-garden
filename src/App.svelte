@@ -5,14 +5,14 @@ import { Vector3 } from "three";
 import Scene from "./Scene.svelte";
 import eventEmitter from "./lib/eventEmitter";
 import { getRandomRotation } from "./lib/helpers";
-// import MobileControls from "./lib/MobileControls.svelte";
-import GamepadControls from "./lib/GamepadControls.svelte";
+import MobileControls from "./lib/MobileControls.svelte";
+// import GamepadControls from "./lib/GamepadControls.svelte";
 import KeyboardControls from "./lib/KeyboardControls.svelte";
 import Overlay from "./lib/Overlay.svelte";
 import type { Body } from "./lib/types";
 import Guide from "./lib/Guide.svelte";
 
-const players: Body[] = $state([]);
+let players: Body[] = $state([]);
 
 let gameStatus = $state("active");
 let playerWhoWon: Body | null = $state(null);
@@ -42,13 +42,13 @@ players.push(
 	},
 	{
 		id: "xx2",
-		name: "Player 2",
+		name: "Bot 1",
 		mounted: Date.now(),
 		position: createRandomPosition(),
 		rotation: getRandomRotation(),
 		color: "green",
 		status: "active",
-		isBot: false,
+		isBot: true,
 		size: 0.5,
 	},
 	{
@@ -96,8 +96,7 @@ eventEmitter.on("gameOver", (args) => {
 	gameStatus = "gameOver";
 });
 
-eventEmitter.on("ballFellOff", (args) => {
-	const { id } = args as { id: string };
+eventEmitter.on("ballFellOff", ({ id }: { id: string }) => {
 	const player = players.find((player) => player.id === id);
 	if (player) player.status = "fallen";
 	checkIfGameOver();
@@ -161,13 +160,10 @@ function restartGame() {
     {/each}
   </div>
   <Guide />
-  <!-- <MobileControls playerId={players[0].id} /> -->
-  <GamepadControls playerId={players[0].id} gamepadId={0} {restartGame} />
-  <GamepadControls playerId={players[1].id} gamepadId={1} {restartGame} />
+  <!-- <GamepadControls playerId={players[0].id} gamepadId={0} {restartGame} />
+  <GamepadControls playerId={players[1].id} gamepadId={1} {restartGame} /> -->
+  <MobileControls playerId={players[0].id} />
   <KeyboardControls playerId={players[0].id} />
-  {#if gameStatus === 'active'}
-	<!-- <Overlay onClick={restartGame} /> -->
-  {/if}
   {#if gameStatus === 'gameOver'}
 	<Overlay onClick={restartGame} {playerWhoWon} /> 
   {/if}

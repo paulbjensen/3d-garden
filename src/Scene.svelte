@@ -6,18 +6,20 @@ import Lighting from "./lib/Lighting.svelte";
 import Plate from "./lib/Plate.svelte";
 import Player from "./lib/Player.svelte";
 import eventEmitter from "./lib/eventEmitter";
-import type { Body, PlayerPosition } from "./lib/types";
+import type { Body, PlayerPosition, Location } from "./lib/types";
 import { setupStartingPositions, toCenter } from "./lib/positionLogic";
 
-const { players } = $props();
+const { players }: { players: Body[] } = $props();
 
 // Setup the default player positions from the initial player props
 const defaultPlayerPositions = setupStartingPositions(players);
 const playerPositions = $state(defaultPlayerPositions);
 
 // Updates the player's position
-function updatePlayerPostion(args: unknown) {
-	const { id, position } = args as PlayerPosition;
+function updatePlayerPosition({
+	id,
+	position,
+}: { id: string; position: Location }) {
 	playerPositions[String(id)] = position;
 }
 
@@ -40,7 +42,7 @@ function movePlayerToCenter(player: Body) {
 }
 
 // Updates the player's position
-eventEmitter.on("playerPositionUpdate", updatePlayerPostion);
+eventEmitter.on("playerPositionUpdate", updatePlayerPosition);
 eventEmitter.on("gameRestart", () => resetPositions(defaultPlayerPositions));
 
 useTask(() => {

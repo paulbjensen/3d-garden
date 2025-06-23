@@ -1,7 +1,11 @@
 <script lang="ts">
 import { onMount, onDestroy } from "svelte";
 import eventEmitter from "./eventEmitter";
-const { playerId, gamepadId, restartGame } = $props();
+const {
+	playerId,
+	gamepadId,
+	restartGame,
+}: { playerId: string; gamepadId: number; restartGame: () => void } = $props();
 
 let listenForPlayerAction = $state(false);
 let gameIsOver = $state(false);

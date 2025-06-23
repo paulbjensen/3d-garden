@@ -10,7 +10,12 @@ import { MeshStandardMaterial, SphereGeometry } from "three";
 import eventEmitter from "./eventEmitter";
 import type { Location, PlayerAction } from "./types";
 
-let { id, position, color, size } = $props();
+let {
+	id,
+	position,
+	color,
+	size,
+}: { id: string; position: Location; color: string; size: number } = $props();
 let rigidBody: RapierRigidBody | undefined = $state(undefined);
 
 const geometry = new SphereGeometry(size);
