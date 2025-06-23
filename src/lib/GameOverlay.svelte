@@ -2,8 +2,9 @@
 import eventEmitter from "./eventEmitter";
 const { onClick, gameSettings } = $props();
 
-function updateNumberOfPlayers(event) {
-	const newNumberOfPlayers = parseInt(event.target.value, 10);
+function updateNumberOfPlayers(event: Event) {
+	const input = event.target as HTMLInputElement;
+	const newNumberOfPlayers = Number.parseInt(input.value, 10);
 	eventEmitter.emit("updateGameSettings", {
 		numberOfPlayers: newNumberOfPlayers,
 	});
@@ -52,9 +53,9 @@ function updateNumberOfPlayers(event) {
         <form>
             <label>
                 Number of players: 
-                <input type="number" on:change={updateNumberOfPlayers} min="2" max="10" bind:value={gameSettings.numberOfPlayers}/>
+                <input type="number" onchange={updateNumberOfPlayers} min="2" max="10" bind:value={gameSettings.numberOfPlayers}/>
             </label>
         </form>
-        <button class="restart-game" on:click={onClick}>Play</button>
+        <button class="restart-game" onclick={onClick}>Play</button>
     </div>
 </div>

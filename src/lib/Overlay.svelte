@@ -48,6 +48,6 @@ const {
         {#if playerWhoWon !== null}
             <p>{playerWhoWon.name} won!</p>
         {/if}
-        <button class="restart-game" on:click={onClick}>Play again</button>
+        <button class="restart-game" onclick={onClick}>Play again</button>
     </div>
 </div>

@@ -25,9 +25,9 @@ function updatePlayerPosition({
 
 // Reset the player positions to the default positions
 function resetPositions(positions: PlayerPosition) {
-	players.forEach((player: Body) => {
+	for (const player of players) {
 		playerPositions[player.id] = positions[player.id];
-	});
+	}
 }
 
 // NOTE - this strategy is to simply move towards the center of the plate

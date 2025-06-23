@@ -2,7 +2,7 @@
   lang="ts"
 >
 import { onDestroy, onMount } from "svelte";
-import { RigidBody as RapierRigidBody } from "@dimforge/rapier3d-compat";
+import type { RigidBody as RapierRigidBody } from "@dimforge/rapier3d-compat";
 import { T } from "@threlte/core";
 import { useTask } from "@threlte/core";
 import { Collider, RigidBody } from "@threlte/rapier";

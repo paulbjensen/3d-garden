@@ -12,11 +12,11 @@ const keyboardControls = {
 };
 
 const lookupKeys = Object.entries(keyboardControls).reduce(
-	(acc, [action, key]) => {
+	(acc: { [key: string]: string }, [action, key]) => {
 		acc[key] = action;
 		return acc;
 	},
-	{},
+	{} as { [key: string]: string },
 );
 
 function handleKeyDown(event: KeyboardEvent) {

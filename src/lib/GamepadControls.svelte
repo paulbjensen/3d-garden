@@ -1,5 +1,5 @@
 <script lang="ts">
-import { onMount, onDestroy } from "svelte";
+import { onMount } from "svelte";
 import eventEmitter from "./eventEmitter";
 const {
 	playerId,
@@ -9,13 +9,13 @@ const {
 
 let listenForPlayerAction = $state(false);
 let gameIsOver = $state(false);
-const gamepads = {};
+const gamepads: { [index: number]: Gamepad } = {};
 
 function jump() {
 	eventEmitter.emit("playerAction", { playerId, action: "jump" });
 }
 
-function movePlayerTo({ x, z }) {
+function movePlayerTo({ x, z }: { x: number; z: number }) {
 	if (!listenForPlayerAction) return;
 	eventEmitter.emit("playerAction", {
 		playerId,
@@ -24,11 +24,7 @@ function movePlayerTo({ x, z }) {
 	});
 }
 
-function gamepadHandler(event, connected) {
-	const gamepad = event.gamepad;
-	// Note:
-	// gamepad === navigator.getGamepads()[gamepad.index]
-
+function gamepadHandler({ gamepad }: { gamepad: Gamepad }, connected: boolean) {
 	if (connected) {
 		gamepads[gamepad.index] = gamepad;
 	} else {

@@ -22,17 +22,19 @@ function stopListening(event: TouchEvent) {
 	z = 0;
 }
 
-function throttle<T extends (...args: any[]) => void>(
+function throttle<T extends (...args: unknown[]) => void>(
 	func: T,
 	limit: number,
 ): T {
 	let inThrottle: boolean;
 
-	return function (this: any, ...args: any[]) {
+	return function (this: unknown, ...args: unknown[]) {
 		if (!inThrottle) {
 			func.apply(this, args);
 			inThrottle = true;
-			setTimeout(() => (inThrottle = false), limit);
+			setTimeout(() => {
+				inThrottle = false;
+			}, limit);
 		}
 	} as T;
 }
@@ -47,7 +49,8 @@ function movePlayerTo(event: TouchEvent) {
 	const rect = controller.getBoundingClientRect();
 	const centerX = rect.left + rect.width / 2;
 	const centerY = rect.top + rect.height / 2;
-	let clientX, clientY;
+	let clientX: number;
+	let clientY: number;
 
 	// Use the first touch point
 	const touch = event.touches[0];
@@ -152,11 +155,11 @@ function mapValue(n: number) {
 </style>
 
 <div id="mobile-controls">
-    <div id="circle-movement-controller" on:touchstart={startListening} on:touchend={stopListening} on:touchmove={movePlayerTo}>
+    <div id="circle-movement-controller" ontouchstart={startListening} ontouchend={stopListening} ontouchmove={movePlayerTo}>
         <div id="circle-movement-controller-inner"
             style:left={mapValue(x) + "px"}
             style:top={mapValue(z) + "px"}
         ></div>
     </div>
-    <button id="jumper-button" on:click={jump}>Jump</button>
+    <button id="jumper-button" onclick={jump}>Jump</button>
 </div>
