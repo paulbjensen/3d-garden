@@ -1,68 +1,77 @@
 <script lang="ts">
 import { Canvas } from "@threlte/core";
 import { World } from "@threlte/rapier";
-import { onDestroy, onMount } from "svelte";
 import { Vector3 } from "three";
 import Scene from "./Scene.svelte";
 import eventEmitter from "./lib/eventEmitter";
 import { getRandomRotation } from "./lib/helpers";
 import MobileControls from "./lib/MobileControls.svelte";
+// import GamepadControls from "./lib/GamepadControls.svelte";
+import KeyboardControls from "./lib/KeyboardControls.svelte";
 import Overlay from "./lib/Overlay.svelte";
 import type { Body } from "./lib/types";
 import Guide from "./lib/Guide.svelte";
 
-const players: Body[] = $state([]);
+let players: Body[] = $state([]);
 
 let gameStatus = $state("active");
 let playerWhoWon: Body | null = $state(null);
 
-const startingPositions = [
-	new Vector3(-1, 4, 1),
-	new Vector3(0, 4, 2),
-	new Vector3(1, 4, 3),
-	new Vector3(2, 4, 4),
-];
+// Maybe we should make the positions random in the future, linked to the size of the map
 
+const createRandomPosition = () => {
+	return new Vector3(
+		Math.floor(Math.random() * 5) - 2, // Random x between -2 and 2
+		4, // Fixed height
+		Math.floor(Math.random() * 5) - 2, // Random z between -2 and 2
+	);
+};
+
+// This adds the players for the game. We will need to make this comfigurable from a new game screen in the future
 players.push(
 	{
 		id: "xx1",
 		name: "Player 1",
 		mounted: Date.now(),
-		position: startingPositions[0],
+		position: createRandomPosition(),
 		rotation: getRandomRotation(), // Maybe this should be a fixed value
 		color: "yellow",
 		status: "active",
 		isBot: false,
+		size: 0.5,
 	},
 	{
 		id: "xx2",
 		name: "Bot 1",
 		mounted: Date.now(),
-		position: startingPositions[1],
+		position: createRandomPosition(),
 		rotation: getRandomRotation(),
 		color: "green",
 		status: "active",
 		isBot: true,
+		size: 0.5,
 	},
 	{
 		id: "xx3",
 		name: "Bot 2",
 		mounted: Date.now(),
-		position: startingPositions[2],
+		position: createRandomPosition(),
 		rotation: getRandomRotation(),
 		color: "blue",
 		status: "active",
 		isBot: true,
+		size: 0.5,
 	},
 	{
 		id: "xx4",
 		name: "Bot 3",
 		mounted: Date.now(),
-		position: startingPositions[3],
+		position: createRandomPosition(),
 		rotation: getRandomRotation(),
 		color: "red",
 		status: "active",
 		isBot: true,
+		size: 0.5,
 	},
 );
 
@@ -87,43 +96,7 @@ eventEmitter.on("gameOver", (args) => {
 	gameStatus = "gameOver";
 });
 
-function handleKeyDown(event: KeyboardEvent) {
-	switch (event.key) {
-		case "ArrowUp":
-			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
-				action: "moveForward",
-			});
-			break;
-		case "ArrowDown":
-			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
-				action: "moveBackward",
-			});
-			break;
-		case "ArrowLeft":
-			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
-				action: "moveLeft",
-			});
-			break;
-		case "ArrowRight":
-			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
-				action: "moveRight",
-			});
-			break;
-		case " ":
-			eventEmitter.emit("playerAction", {
-				playerId: players[0].id,
-				action: "jump",
-			});
-			break;
-	}
-}
-
-eventEmitter.on("ballFellOff", (args) => {
-	const { id } = args as { id: string };
+eventEmitter.on("ballFellOff", ({ id }: { id: string }) => {
 	const player = players.find((player) => player.id === id);
 	if (player) player.status = "fallen";
 	checkIfGameOver();
@@ -137,13 +110,6 @@ function restartGame() {
 	playerWhoWon = null;
 	eventEmitter.emit("gameRestart");
 }
-
-onMount(() => {
-	window.addEventListener("keydown", handleKeyDown);
-});
-onDestroy(() => {
-	window.removeEventListener("keydown", handleKeyDown);
-});
 </script>
 
 <style>
@@ -194,7 +160,10 @@ onDestroy(() => {
     {/each}
   </div>
   <Guide />
+  <!-- <GamepadControls playerId={players[0].id} gamepadId={0} {restartGame} />
+  <GamepadControls playerId={players[1].id} gamepadId={1} {restartGame} /> -->
   <MobileControls playerId={players[0].id} />
+  <KeyboardControls playerId={players[0].id} />
   {#if gameStatus === 'gameOver'}
 	<Overlay onClick={restartGame} {playerWhoWon} /> 
   {/if}

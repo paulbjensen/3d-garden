@@ -1,9 +1,13 @@
 <script lang="ts">
-import type { Body } from "./types";
-const {
-	playerWhoWon,
-	onClick,
-}: { playerWhoWon: Body | null; onClick: () => void } = $props();
+import eventEmitter from "./eventEmitter";
+const { onClick, gameSettings } = $props();
+
+function updateNumberOfPlayers(event) {
+	const newNumberOfPlayers = parseInt(event.target.value, 10);
+	eventEmitter.emit("updateGameSettings", {
+		numberOfPlayers: newNumberOfPlayers,
+	});
+}
 </script>
 
 <style>
@@ -20,7 +24,7 @@ const {
     color: white;
   }
 
-  #game-over {
+  #new-game-modal {
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.8);
@@ -43,11 +47,14 @@ const {
 </style>
 
 <div id="overlay">
-    <div id="game-over">
-        <h1>Game Over</h1>
-        {#if playerWhoWon !== null}
-            <p>{playerWhoWon.name} won!</p>
-        {/if}
-        <button class="restart-game" on:click={onClick}>Play again</button>
+    <div id="new-game-modal">
+        <h1>New game</h1>
+        <form>
+            <label>
+                Number of players: 
+                <input type="number" on:change={updateNumberOfPlayers} min="2" max="10" bind:value={gameSettings.numberOfPlayers}/>
+            </label>
+        </form>
+        <button class="restart-game" on:click={onClick}>Play</button>
     </div>
 </div>

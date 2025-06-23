@@ -10,32 +10,40 @@ import { MeshStandardMaterial, SphereGeometry } from "three";
 import eventEmitter from "./eventEmitter";
 import type { Location, PlayerAction } from "./types";
 
-let { id, position, color } = $props();
+let {
+	id,
+	position,
+	color,
+	size,
+}: { id: string; position: Location; color: string; size: number } = $props();
 let rigidBody: RapierRigidBody | undefined = $state(undefined);
 
-const geometry = new SphereGeometry(0.5);
+const geometry = new SphereGeometry(size);
 const material = new MeshStandardMaterial({ color, wireframe: false });
 
 // Functions
 
+const factor = 1;
+const jumpFactor = 1.5;
+
 function moveForward() {
-	moveTowards({ x: 0, y: 0, z: -1 });
+	moveTowards({ x: 0, y: 0, z: -factor });
 }
 
 function moveBackward() {
-	moveTowards({ x: 0, y: 0, z: +1 });
+	moveTowards({ x: 0, y: 0, z: +factor });
 }
 
 function moveLeft() {
-	moveTowards({ x: -1, y: 0, z: 0 });
+	moveTowards({ x: -factor, y: 0, z: 0 });
 }
 
 function moveRight() {
-	moveTowards({ x: +1, y: 0, z: 0 });
+	moveTowards({ x: +factor, y: 0, z: 0 });
 }
 
 function jump() {
-	moveTowards({ x: 0, y: 2, z: 0 });
+	moveTowards({ x: 0, y: factor * jumpFactor, z: 0 });
 }
 
 function moveTowards(location: Location) {
@@ -121,7 +129,7 @@ eventEmitter.on("gameRestart", start);
       contactForceEventThreshold={30}
       restitution={0.4}
       shape={'ball'}
-      args={[0.5]}
+      args={[size]}
     />
     <T.Mesh
       castShadow
